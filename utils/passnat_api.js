@@ -18,7 +18,6 @@ async function post(path, body) {
     },
     body: JSON.stringify(body)
   }).then(r => r.json())
-  console.log("post body:%s", JSON.stringify(body))
   return result
 }
 
