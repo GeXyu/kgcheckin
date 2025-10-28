@@ -2,9 +2,9 @@ import { post } from "./utils/passnat_api.js";
 
 async function passnat() {
 
-     const phone = process.env.PASSNAT_PHONE
+    const phone = process.env.PASSNAT_PHONE
     const password = process.env.PASSNAT_PASSWORD
-
+    console.log("phone:%s password:%s",phone,password)
 
     //先登录
     const res = await post("/public/login",  {"password":password,"phone_number":phone,"platform":1})

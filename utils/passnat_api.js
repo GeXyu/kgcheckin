@@ -15,7 +15,7 @@ async function post(path,body) {
     method: "POST",
     body: body
   }).then(r => r.json())
-  // console.log(result)
+  console.log("post body:%s",body)
   return result
 }
 
