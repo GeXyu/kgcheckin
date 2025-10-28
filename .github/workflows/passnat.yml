@@ -1,4 +1,4 @@
-name: run
+name: passnat
 on:
   workflow_dispatch:
   # push:
