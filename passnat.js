@@ -10,8 +10,8 @@ async function passnat() {
     const res = await post("/public/login",  {"password":password,"phone_number":phone,"platform":1})
     console.log(res)
 
-    const checkin = await get("/user/checkIn",  {})
-    console.log(checkin)
+    // const checkin = await get("/user/checkIn",  {})
+    // console.log(checkin)
 }
 
 passnat()

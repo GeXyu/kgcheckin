@@ -16,5 +16,5 @@ jobs:
       - run: npm run install
       - run: npm run passnat
         env:
-          TOKEN: ${{ secrets.TOKEN }}
-          USERID: ${{ secrets.USERID }}
+          PASSNAT_PHONE: ${{ secrets.PASSNAT_PHONE }}
+          PASSNAT_PASSWORD: ${{ secrets.PASSNAT_PASSWORD }}
