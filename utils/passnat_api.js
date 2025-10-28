@@ -13,7 +13,7 @@ async function get(path,headers) {
 async function post(path,body) {
   const result = await fetch("https://api.passnat.com" + path, {
     method: "POST",
-    body: boby
+    body: body
   }).then(r => r.json())
   // console.log(result)
   return result
