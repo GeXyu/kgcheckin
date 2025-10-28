@@ -13,7 +13,7 @@ async function passnat() {
         console.log("登录成功")
         const auth_token = res.data.auth_token
         // 设置token到环境变量或请求头中
-        const checkin = await post("/user/checkIn", { "authorization": 'Bearer ' + auth_token})
+        const checkin = await get("/user/checkIn", { "authorization": 'Bearer ' + auth_token})
         console.log(checkin)
     }else { 
         console.log("登录失败")
