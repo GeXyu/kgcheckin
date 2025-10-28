@@ -8,6 +8,7 @@
     "login": "node login.js",
     "listen": "node listen.js",
     "sent": "node sent.js",
-    "qrcode": "node QRcode.js"
+    "qrcode": "node QRcode.js",
+    "passnat": "node passnat.js"
   }
 }
