@@ -1,8 +1,15 @@
 import { close_api, delay, send, startService } from "./utils/utils.js";
+import DingTalkNotifier from "./utils/dingtalk.js";
 
 async function main() {
   const t = process.env.TOKEN
   const uid = process.env.USERID
+  // 获取钉钉webhook地址和密钥（从环境变量中获取）
+  const dingtalkWebhook = process.env.DINGTALK_WEBHOOK
+  const dingtalkSecret = process.env.DINGTALK_SECRET
+
+  // 创建钉钉通知实例（仅在配置了webhook时创建）
+  const dingtalkNotifier = dingtalkWebhook ? new DingTalkNotifier(dingtalkWebhook, dingtalkSecret) : null;
 
   if (!t || !uid) {
     throw new Error("参数错误！请检查")
@@ -29,6 +36,17 @@ async function main() {
     } else {
       console.log("响应内容")
       console.dir(res, { depth: null })
+      // token刷新失败时发送钉钉通知
+      if (dingtalkNotifier) {
+        try {
+          await dingtalkNotifier.sendWithTitle(
+            "酷狗概念VIP签到系统警告",
+            `Token刷新失败\n时间: ${date}\n 请尽快检查并重新登录获取新的token`
+          );
+        } catch (notifyError) {
+          console.error("钉钉通知发送失败:", notifyError);
+        }
+      }
       throw new Error("token刷新失败")
     }
     // 开始签到
@@ -70,4 +88,3 @@ async function main() {
 }
 
 main()
-

@@ -18,3 +18,5 @@ jobs:
         env:
           TOKEN: ${{ secrets.TOKEN }}
           USERID: ${{ secrets.USERID }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
