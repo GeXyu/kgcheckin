@@ -1,4 +1,5 @@
 import { post, get } from "./utils/passnat_api.js";
+import { delay } from "./utils/utils.js";
 import DingTalkNotifier from "./utils/dingtalk.js";
 async function passnat() {
     const phone = process.env.PASSNAT_PHONE
@@ -17,7 +18,7 @@ async function passnat() {
     // // 如果登录成功，执行签到
     if (res.code === 10000) {
         console.log("登录成功")
-        await delay(10 * 1000)
+        await delay(5 * 1000)
         const auth_token = res.data.auth_token
         // 设置token到环境变量或请求头中
         const checkin = await get("/user/checkIn", { "authorization": 'Bearer ' + auth_token})
