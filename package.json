@@ -10,8 +10,5 @@
     "sent": "node sent.js",
     "qrcode": "node QRcode.js",
     "passnat": "node passnat.js"
-  },
-  "dependencies": {
-    "node-fetch": "^3.3.2"
   }
 }
