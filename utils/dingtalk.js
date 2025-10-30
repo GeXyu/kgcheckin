@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 
 /**
  * 钉钉通知类
@@ -24,7 +25,6 @@ class DingTalkNotifier {
       return '';
     }
 
-    const crypto = require('crypto');
     const stringToSign = timestamp + '\n' + this.secret;
     const sign = crypto.createHmac('sha256', this.secret)
       .update(stringToSign, 'utf8')
