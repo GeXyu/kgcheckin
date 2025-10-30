@@ -22,18 +22,18 @@ async function passnat() {
         const checkin = await get("/user/checkIn", { "authorization": 'Bearer ' + auth_token})
         console.log(checkin)
 
-        if (dingtalkNotifier) {
-        try {
-          await dingtalkNotifier.sendWithTitle(
-            "恭喜!",
-            "PASSNAT签到成功"
-          );
-        } catch (notifyError) {
-          console.error("钉钉通知发送失败:", notifyError);
-        }
-      }
     }else { 
         console.log("登录失败")
+        if (dingtalkNotifier) {
+            try {
+            await dingtalkNotifier.sendWithTitle(
+                "注意!",
+                "passnat登陆失败!"
+            );
+            } catch (notifyError) {
+            console.error("钉钉通知发送失败:", notifyError);
+            }
+        }
     }
 }
 
