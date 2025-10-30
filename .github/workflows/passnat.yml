@@ -18,3 +18,5 @@ jobs:
         env:
           PASSNAT_PHONE: ${{ secrets.PASSNAT_PHONE }}
           PASSNAT_PASSWORD: ${{ secrets.PASSNAT_PASSWORD }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
