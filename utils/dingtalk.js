@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import fetch from 'node-fetch';
 
 /**
  * 钉钉通知类
