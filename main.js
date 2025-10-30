@@ -40,8 +40,8 @@ async function main() {
       if (dingtalkNotifier) {
         try {
           await dingtalkNotifier.sendWithTitle(
-            "酷狗概念VIP签到系统警告",
-            `Token刷新失败\n时间: ${date}\n 请尽快检查并重新登录获取新的token\n 响应内容:${res}`
+            "酷狗签到系统警告",
+            "Token刷新失败,请尽快检查并重新登录获取新的token"
           );
         } catch (notifyError) {
           console.error("钉钉通知发送失败:", notifyError);
