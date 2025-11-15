@@ -9,6 +9,7 @@
     "listen": "node listen.js",
     "sent": "node sent.js",
     "qrcode": "node QRcode.js",
-    "passnat": "node passnat.js"
+    "passnat": "node passnat.js",
+    "enshan": "node enshan.js"
   }
 }
