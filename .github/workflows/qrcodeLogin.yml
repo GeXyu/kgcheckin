@@ -1,0 +1,51 @@
+name: qrcodeLogin
+on:
+  workflow_dispatch:
+    inputs:
+      number:
+        description: "需要登录几个账号?"
+        required: true
+        default: 1
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v3
+      - name: 创建node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: ./api/package-lock.json
+      - name: 🔧 安装GitHub CLI，并使用PAT登录
+        env:
+          PAT: ${{ secrets.PAT }}
+        run: |
+          if [ -n "${PAT}" ]; then
+            curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+            sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+            sudo apt update
+            sudo apt install gh -y
+            gh --version
+            echo "${{ secrets.PAT }}" | gh auth login --with-token
+            gh auth status
+          fi
+      - name: Cache node_modules in api directory
+        id: cache-npm
+        uses: actions/cache@v3
+        with:
+          path: ./api/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('./api/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: 安装依赖
+        run: npm run install
+        if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
+      - name: 二维码登录
+        run: npm run qrcodeLogin
+        env:
+          NUMBER: ${{ github.event.inputs.number }}
+          PAT: ${{ secrets.PAT }}
+          GITHUB_REPOSITORY: ${{ github.repository }}

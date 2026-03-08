@@ -1,13 +1,12 @@
-name: sent
+name: main
 on:
   workflow_dispatch:
   # push:
-  # schedule:
-  #   - cron: 1 16 * * *
+  schedule:
+    - cron: 1 16 * * *
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 2
     steps:
       - name: 检出仓库
         uses: actions/checkout@v3
@@ -28,7 +27,7 @@ jobs:
       - name: 安装依赖
         run: npm run install
         if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-      - name: 发送验证码
-        run: npm run sent
+      - name: 签到
+        run: npm run main
         env:
-          PHONE: ${{ secrets.PHONE }}
+          USERINFO: ${{ secrets.USERINFO }}

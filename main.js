@@ -1,19 +1,15 @@
+import { printBlue, printGreen, printMagenta, printRed, printYellow } from "./utils/colorOut.js";
 import { close_api, delay, send, startService } from "./utils/utils.js";
 import DingTalkNotifier from "./utils/dingtalk.js";
 
 async function main() {
-  const t = process.env.TOKEN
-  const uid = process.env.USERID
-  // 获取钉钉webhook地址和密钥（从环境变量中获取）
-  const dingtalkWebhook = process.env.DINGTALK_WEBHOOK
-  const dingtalkSecret = process.env.DINGTALK_SECRET
 
-  // 创建钉钉通知实例（仅在配置了webhook时创建）
-  const dingtalkNotifier = dingtalkWebhook ? new DingTalkNotifier(dingtalkWebhook, dingtalkSecret) : null;
-
-  if (!t || !uid) {
-    throw new Error("参数错误！请检查")
+  const USERINFO = process.env.USERINFO
+  if (!USERINFO) {
+    throw new Error("未配置")
   }
+  const userinfo = JSON.parse(USERINFO)
+
   // 启动服务
   const api = startService()
   await delay(2000)
@@ -27,62 +23,78 @@ async function main() {
   const yyyy = today.getFullYear(); // 获取年份
   const date = yyyy + '-' + MM + '-' + DD
 
-  const headers = { 'cookie': 'token=' + t + '; userid=' + uid }
+  const errorMsg = {}
   try {
-    // 刷新令牌
-    const res = await send("/login/token", "GET", headers)
-    if (res.status == 1) {
-      console.log("token刷新成功")
-    } else {
-      console.log("响应内容")
-      console.dir(res, { depth: null })
-      // token刷新失败时发送钉钉通知
-      if (dingtalkNotifier) {
-        try {
-          await dingtalkNotifier.sendWithTitle(
-            "酷狗签到系统警告",
-            "Token刷新失败,请尽快检查并重新登录获取新的token"
-          );
-        } catch (notifyError) {
-          console.error("钉钉通知发送失败:", notifyError);
+    // 开始签到
+    for (const user of userinfo) {
+      const headers = { 'cookie': 'token=' + user.token + '; userid=' + user.userid }
+      // console.log(headers)
+      const userDetail = await send(`/user/detail?timestrap=${Date.now()}`, "GET", headers)
+      if (userDetail?.data?.nickname == null) {
+        printRed(`token过期或账号不存在, userid: ${user.userid}`)
+        errorMsg[user.userid] = {
+          msg: `token过期或账号不存在, userid: ${user.userid}`,
+          data: userDetail
+        }
+        continue
+      }
+      printMagenta(`账号 ${userDetail?.data?.nickname} 开始领取VIP...`)
+
+      // 开始听歌
+      printYellow(`开始听歌领取VIP...`)
+      // 听歌获取vip
+      const listen = await send(`/youth/listen/song?timestrap=${Date.now()}`, "GET", headers)
+
+      if (listen.status === 1) {
+        printGreen("听歌领取成功")
+      } else if (listen.error_code === 130012) {
+        printGreen("今日已领取")
+      } else {
+        errorMsg[userDetail?.data?.nickname + " listen"] = listen
+        printRed("听歌领取失败")
+      }
+
+      printYellow("开始领取VIP...")
+      for (let i = 1; i <= 8; i++) {
+        // ad获取vip
+        const ad = await send(`/youth/vip?timestrap=${Date.now()}`, "GET", headers)
+        // 签到出现问题
+        // errorMsg[`${userDetail?.data?.nickname} ad${i}`] = ad
+        if (ad.status === 1) {
+          printGreen(`第${i}次领取成功`)
+          if (i != 8) {
+            await delay(30 * 1000)
+          }
+        } else if (ad.error_code === 30002) {
+          printGreen("今天次数已用光")
+          break
+        } else {
+          printRed(`第${i}次领取失败`)
+          // console.dir(ad, { depth: null })
+          errorMsg[userDetail?.data?.nickname + " ad"] = ad
+          break
         }
       }
-      throw new Error("token刷新失败")
-    }
-    // 开始签到
-    for (let i = 1; i <= 8; i++) {
-      console.log(`开始第${i}次签到`)
-      // 签到获取vip
-      const cr = await send("/youth/vip", "GET", headers)
 
-      if (cr.status === 1) {
-        console.log("签到成功")
+      const vip_details = await send(`/user/vip/detail?timestrap=${Date.now()}`, "GET", headers)
+      if (vip_details.status === 1) {
+        printBlue(`今天是：${date}`)
+        printBlue(`VIP到期时间：${vip_details.data.busi_vip[0].vip_end_time}\n`)
       } else {
-        console.log("响应内容")
-        console.dir(cr, { depth: null })
-        throw new Error("签到失败：" + cr.error_msg)
+        printRed("获取失败\n")
+        errorMsg[userDetail?.data?.nickname + " vip_details"] = vip_details
       }
-      if (i != 8) {
-        await delay(5 * 60 * 1000)
-      }
-    }
-
-    const vip_details = await send("/user/vip/detail", "GET", headers)
-    if (vip_details.status === 1) {
-      console.log(`今天是：${date}`)
-      console.log(`VIP到期时间：${vip_details.data.busi_vip[0].vip_end_time}`)
-    } else {
-      console.log("响应内容")
-      console.dir(vip_details, { depth: null })
-      throw new Error("获取失败")
     }
   } finally {
     close_api(api)
   }
+  if (Object.keys(errorMsg).length > 0) {
+    printRed("异常信息如下:")
+    console.dir(errorMsg, { depth: null })
+    throw new Error("领取异常")
+  }
 
   if (api.killed) {
-    // 强制关闭进程
-    // 必须强制关闭，不然action不会停止
     process.exit(0)
   }
 }

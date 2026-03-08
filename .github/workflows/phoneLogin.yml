@@ -1,4 +1,4 @@
-name: sent
+name: phoneLogin
 on:
   workflow_dispatch:
   # push:
@@ -28,7 +28,8 @@ jobs:
       - name: 安装依赖
         run: npm run install
         if: ${{ steps.cache-npm.outputs.cache-hit != 'true' }}
-      - name: 发送验证码
-        run: npm run sent
+      - name: 手机号登录
+        run: npm run phoneLogin
         env:
           PHONE: ${{ secrets.PHONE }}
+          CODE: ${{ secrets.CODE }}

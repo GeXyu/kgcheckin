@@ -5,6 +5,9 @@ GitHub Actions 实现 `酷狗概念VIP` 自动签到
 
 提供二维码登录(推荐)和手机号登录(一个手机号绑定多个账号无法登录,见 [多账号登录问题](https://github.com/MakcRe/KuGouMusicApi/issues/51))
 
+感谢 [@itfw](https://github.com/itfw) 提供二维码显示问题的解决方案<br>
+感谢 [@klaas8](https://github.com/klaas8) 提供自动写入secret的方法
+
 > [!warning]
 > 注意事项
 >
@@ -13,12 +16,67 @@ GitHub Actions 实现 `酷狗概念VIP` 自动签到
 > 1. 可以只在APP听歌，不领取VIP相关的奖励，减少对签到的影响(鬼知道官方后续会推出什么奇葩活动)。
 > 1. 下面是部分已知错误码
 >
-> | 错误码 | 描述       |
-> | ------ | ---------- |
-> | 51002  | 未登录     |
-> | 20018  | 未登录     |
-> | 130012 | 已领取     |
-> | 30002  | 次数已用光 |
+> > | 错误码 | 描述       |
+> > | ------ | ---------- |
+> > | 51002  | 未登录     |
+> > | 20018  | 未登录     |
+> > | 130012 | 已领取     |
+> > | 30002  | 次数已用光 |
+
+## 使用说明
+
+两种登录方式任选其一，同时使用两种登录则优先二维码登录
+
+1. Fork 本仓库
+
+1. 登录
+
+   2.1 二维码(推荐)<br>
+   自动写入secret(可选)
+   - **创建令牌**  
+     复制下方官网链接，在浏览器中打开
+
+     ```
+     https://github.com/settings/tokens/new
+     ```
+
+   - **登录 GitHub 官网**  
+     若登陆后未跳转至token生成页，请再次粘贴链接进行访问
+   - **在设置页面配置权限**  
+     **Note 备注**：随意填写  
+     **Expiration (有效期)**：建议选择 "No expiration" 永不过期或自定义时间  
+     **Select scopes (权限)**：所有勾选框都打勾
+   - 滑动到底部，点击绿色的 Generate token 保存按钮
+   - 复制生成的字符串 (ghp\_开头)，回到本仓库添加到`Secret` 变量名 `PAT` value `复制的令牌`
+
+   运行 Actions `qrcodeLogin` 并进入(若不显示,可以刷新页面)，点击run -> 展开二维码登录, 根据提示操作即可。
+
+   2.2 手机号
+
+   添加手机号到 Secret `PHONE`，运行 Actions `sent` 获取验证码，把验证码添加到 Secret `CODE`；运行Actions `phoneLogin`，复制 `token` 和 `userid` 添加到 Secret `USERINFO`，格式如下, 注意删去换行，否则会多出一些字符，但是不影响签到
+
+   > ```json
+   > [
+   >   { "userid": "写入id", "token": "写入token" },
+   >   // 其他账号信息 注意删掉此行
+   >   { "userid": "写入id", "token": "写入token" }
+   > ]
+   > ```
+
+1. 启用 Actions `main` (默认启用), 每天北京时间 00:01 自动签到
+
+API源代码来自 [MakcRe/KuGouMusicApi](https://github.com/MakcRe/KuGouMusicApi) ~~图省事直接搬来~~
+
+## Secret 位置
+
+1. 步骤一
+   ![步骤一](./imgs/步骤一.jpg)
+1. 步骤二
+   ![步骤二](./imgs/步骤二.jpg)
+1. 步骤三
+   ![步骤三](./imgs/步骤三.jpg)
+1. 步骤四
+   ![步骤四](./imgs/步骤四.jpg)
 
 ## 免责声明
 
@@ -31,36 +89,3 @@ GitHub Actions 实现 `酷狗概念VIP` 自动签到
 > 5. 音乐平台不易，请尊重版权，支持正版。
 > 6. 本项目仅用于对技术可行性的探索及研究，不接受任何商业（包括但不限于广告等）合作及捐赠。
 > 7. 如果官方音乐平台觉得本项目不妥，可联系本项目更改或移除。
-
-## 使用说明
-
-两种登录方式任选其一，同时使用两种登录则优先二维码登录
-
-1. Fork 本仓库
-
-1. 登录方式
-
-   2.1 二维码(推荐)
-
-   运行 Actions `QRcode` 成功后复制key和二维码链接，二维码链接粘到浏览器打开，用酷狗概念版扫描并确认登录(二维码过期较快，请尽快扫码确认)。确认登录后把key添加到 Secret `KEY` （什么？不知道 Secret在哪？[点我](#secret)）
-
-   2.2 手机号
-
-   添加手机号到 Secret `PHONE`，运行 Actions `sent` 获取验证码，添加收到的验证码到 Secret `CODE`
-
-1. 运行 Actions `login` 成功后复制 `token` 和 `userid`并添加到 Secret `TOKEN` `USERID`
-
-1. 启用 Actions `run` 和 `listen`, 每天北京时间 00:01 自动签到
-
-API源代码来自 [MakcRe/KuGouMusicApi](https://github.com/MakcRe/KuGouMusicApi) ~~图省事直接搬来~~
-
-## Secret
-
-1. 步骤一
-   ![步骤一](./imgs/步骤一.jpg)
-1. 步骤二
-   ![步骤二](./imgs/步骤二.jpg)
-1. 步骤三
-   ![步骤三](./imgs/步骤三.jpg)
-1. 步骤四
-   ![步骤四](./imgs/步骤四.jpg)
