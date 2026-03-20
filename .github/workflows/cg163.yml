@@ -1,0 +1,21 @@
+name: passnat
+on:
+  workflow_dispatch:
+  # push:
+  schedule:
+    - cron: 30 16 * * *
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm run install
+      - run: npm run cg163
+        env:
+          WYYCG_COOKIES: ${{ secrets.WYYCG_COOKIES }}
+          DINGTALK_WEBHOOK: ${{ secrets.DINGTALK_WEBHOOK }}
+          DINGTALK_SECRET: ${{ secrets.DINGTALK_SECRET }}
