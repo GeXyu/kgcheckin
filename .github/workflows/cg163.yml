@@ -1,4 +1,4 @@
-name: passnat
+name: cg163
 on:
   workflow_dispatch:
   # push:
