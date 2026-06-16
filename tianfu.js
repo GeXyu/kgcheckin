@@ -1,6 +1,6 @@
-import { daily_claim } from "./utils/passnat_api.js";
-import { delay } from "./utils/utils.js";
+import { daily_claim } from "./utils/tianfu_api.js";
 import DingTalkNotifier from "./utils/dingtalk.js";
+
 async function tianfu() {
     const auth_token = process.env.TIANFU_TOKEN
     // 获取钉钉webhook地址和密钥（从环境变量中获取）
@@ -10,11 +10,10 @@ async function tianfu() {
     // 创建钉钉通知实例（仅在配置了webhook时创建）
     const dingtalkNotifier = dingtalkWebhook ? new DingTalkNotifier(dingtalkWebhook, dingtalkSecret) : null;
 
-    // 先登录
+    // 签到
     const res = await daily_claim(auth_token)
-
     
-    // // 如果登录成功，执行签到
+    //
     if (res.code === 200) {
         console.log("签到成功")
     }else { 
