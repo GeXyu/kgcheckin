@@ -4,7 +4,7 @@ async function daily_claim(token) {
   const result = await fetch("https://api.tianfuagent.com/user/api/v1/user/user/credits/daily-claim", {
     method: "POST",
     headers: {
-      "Content-Type": "application/json"
+      "Content-Type": "application/json",
       "authorization": token
     },
 
