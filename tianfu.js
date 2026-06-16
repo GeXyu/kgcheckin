@@ -12,12 +12,13 @@ async function tianfu() {
 
     // 签到
     const res = await daily_claim(auth_token)
+    console.log(res)
     
     //
     if (res.code === 200) {
         console.log("签到成功")
     }else { 
-        console.log("签到成功")
+        console.log("签到失败")
         if (dingtalkNotifier) {
             try {
             await dingtalkNotifier.sendWithTitle(
