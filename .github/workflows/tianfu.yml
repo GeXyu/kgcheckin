@@ -1,4 +1,4 @@
-name: passnat
+name: tianfu
 on:
   workflow_dispatch:
   # push:
