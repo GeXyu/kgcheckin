@@ -9,6 +9,7 @@
     "sent": "node sent.js",
     "passnat": "node passnat.js",
     "cg163": "node cg163.js",
-    "qrcodeLogin": "node qrcodeLogin.js"
+    "qrcodeLogin": "node qrcodeLogin.js",
+    "tianfu": "node tianfu.js"
   }
 }
