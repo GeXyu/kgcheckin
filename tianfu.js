@@ -18,7 +18,7 @@ async function tianfu() {
     if (res.code === 200) {
         console.log("签到成功")
     }else { 
-        console.log("登录失败")
+        console.log("签到成功")
         if (dingtalkNotifier) {
             try {
             await dingtalkNotifier.sendWithTitle(
